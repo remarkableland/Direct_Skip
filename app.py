@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import io
+from datetime import datetime
 from typing import Dict, Optional
 
 # Column mapping based on MAP.xlsx
@@ -44,6 +45,29 @@ def process_csv(df: pd.DataFrame, property_ref_code: str) -> pd.DataFrame:
     mapped_df["Custom Field 1"] = property_ref_code
     
     return mapped_df
+
+def generate_output_filename(property_ref_code: str) -> str:
+    """
+    Generate output filename in format: YYYYMMDD_CustomField_DirectSkip_Import.csv
+    
+    Args:
+        property_ref_code: Property reference code from user input
+        
+    Returns:
+        Generated filename string
+    """
+    # Get current date in YYYYMMDD format
+    date_str = datetime.now().strftime("%Y%m%d")
+    
+    # Clean the property reference code for filename (remove invalid characters)
+    if property_ref_code:
+        custom_field = re.sub(r'[<>:"/\\|?*]', '', str(property_ref_code))
+        custom_field = custom_field.replace(' ', '_')  # Replace spaces with underscores
+        filename = f"{date_str}_{custom_field}_DirectSkip_Import.csv"
+    else:
+        filename = f"{date_str}_DirectSkip_Import.csv"
+    
+    return filename
 
 def validate_input_file(df: pd.DataFrame) -> bool:
     """

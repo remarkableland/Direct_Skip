@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import io
+import re
 from datetime import datetime
 from typing import Dict, Optional
 
@@ -166,9 +167,8 @@ def main():
                 mapped_df.to_csv(csv_buffer, index=False)
                 csv_data = csv_buffer.getvalue()
                 
-                # Generate filename
-                original_filename = uploaded_file.name.rsplit('.', 1)[0]
-                output_filename = f"{original_filename}_mapped.csv"
+                # Generate filename using date + property reference code + "DirectSkip_Import"
+                output_filename = generate_output_filename(property_ref_code)
                 
                 st.download_button(
                     label="📥 Download Mapped CSV",
@@ -177,6 +177,9 @@ def main():
                     mime="text/csv",
                     use_container_width=True
                 )
+                
+                # Show filename info
+                st.info(f"📁 **Filename**: `{output_filename}`")
                 
                 # Show mapping summary
                 with st.expander("🔍 Column Mapping Details"):

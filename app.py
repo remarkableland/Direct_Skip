@@ -21,7 +21,7 @@ COLUMN_MAPPING = {
 
 def deduplicate_dataframe(df: pd.DataFrame) -> Tuple[pd.DataFrame, int]:
     """
-    Remove duplicate records based on owner name and property address combination.
+    Remove duplicate records based on owner name and mailing address combination.
     
     Args:
         df: Input DataFrame with mapped columns
@@ -33,8 +33,8 @@ def deduplicate_dataframe(df: pd.DataFrame) -> Tuple[pd.DataFrame, int]:
     
     # Create a composite key for deduplication based on:
     # - Owner full name (First Name + Last Name)
-    # - Property Address
-    # This combination should uniquely identify a property-owner relationship
+    # - Mailing Address
+    # This combination should uniquely identify a unique owner-mailing address relationship
     
     # Fill NaN values with empty strings for consistent comparison
     df_clean = df.fillna('')
@@ -43,16 +43,16 @@ def deduplicate_dataframe(df: pd.DataFrame) -> Tuple[pd.DataFrame, int]:
     df_clean['_dedup_owner'] = (df_clean['First Name'].str.strip().str.upper() + 
                                ' ' + df_clean['Last Name'].str.strip().str.upper()).str.strip()
     
-    df_clean['_dedup_property'] = (df_clean['Property Address'].str.strip().str.upper() + 
-                                  ' ' + df_clean['Property City'].str.strip().str.upper() + 
-                                  ' ' + df_clean['Property State'].str.strip().str.upper()).str.strip()
+    df_clean['_dedup_mailing'] = (df_clean['Mailing Address'].str.strip().str.upper() + 
+                                 ' ' + df_clean['Mailing City'].str.strip().str.upper() + 
+                                 ' ' + df_clean['Mailing State'].str.strip().str.upper()).str.strip()
     
     # Remove duplicates based on the composite key
     # Keep the first occurrence of each unique combination
-    df_deduped = df_clean.drop_duplicates(subset=['_dedup_owner', '_dedup_property'], keep='first')
+    df_deduped = df_clean.drop_duplicates(subset=['_dedup_owner', '_dedup_mailing'], keep='first')
     
     # Remove the temporary deduplication columns
-    df_deduped = df_deduped.drop(columns=['_dedup_owner', '_dedup_property'])
+    df_deduped = df_deduped.drop(columns=['_dedup_owner', '_dedup_mailing'])
     
     # Calculate number of duplicates removed
     duplicates_removed = initial_count - len(df_deduped)
@@ -153,7 +153,7 @@ def main():
     - PROP_ZIP → Property Zip
     
     **Deduplication Logic:**
-    Removes duplicates based on owner name + property address combination.
+    Removes duplicates based on owner name + mailing address combination.
     """)
     
     st.markdown("---")

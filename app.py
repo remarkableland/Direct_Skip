@@ -258,13 +258,15 @@ def main():
                 with st.expander("🔄 Deduplication Details"):
                     st.markdown("""
                     **Deduplication Method:**
-                    - Creates composite key from: Owner Name + Mailing Address + Mailing City + Mailing State
+                    - Creates composite key from: OWNER_NAME_1 + OWNER_ADDRESS + OWNER_CITY + OWNER_STATE
+                    - Runs BEFORE column mapping (uses original column names)
                     - Converts text to uppercase for case-insensitive comparison
                     - Keeps the first occurrence of each unique combination
                     - Removes temporary matching columns after processing
                     
                     **Why This Works:**
-                    - Same owner + same mailing address = likely duplicate
+                    - Same owner name + same mailing address = likely duplicate
+                    - Uses original data format before any transformations
                     - Accounts for slight formatting differences in text
                     - Preserves data integrity by keeping complete first occurrence
                     - Focuses on unique recipients rather than unique properties

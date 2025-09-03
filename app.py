@@ -176,8 +176,11 @@ def main():
     
     if uploaded_file is not None and property_ref_code:
         try:
-            # Read the CSV file
-            df = pd.read_csv(uploaded_file)
+            # Read the CSV file with ZIP codes as strings to prevent decimal formatting
+            df = pd.read_csv(uploaded_file, dtype={
+                'OWNER_ZIP': str,
+                'PROP_ZIP': str
+            })
             
             st.success(f"✅ File uploaded successfully! Found {len(df)} rows and {len(df.columns)} columns.")
             
